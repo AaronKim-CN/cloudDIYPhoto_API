@@ -83,6 +83,7 @@ router
         getAlbumNames().then((data)=>{
 
             res.send(data)
+            console.log(res)
         })
 
     })
