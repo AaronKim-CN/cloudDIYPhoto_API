@@ -83,7 +83,7 @@ router
         getAlbumNames().then((data)=>{
 
             res.send(data)
-            console.log(res)
+            //console.log(res)
         })
 
     })
@@ -91,7 +91,7 @@ router
 
         // Get all images in the album
         getAlbumImages(req.params.albumid).then((data)=>{
-            console.log(data)
+            // console.log(data)
             res.send(data)
         })
     });

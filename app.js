@@ -15,6 +15,7 @@ var mys3Router = require('./routes/mys3');
 var getAlbumsRouter = require('./routes/getalbums');
 var getRandomImage = require('./routes/getrandomimage');
 var uploadtos3 =  require('./routes/uploadtos3');
+var login = require('./routes/loginapi');
 var app = express();
 
 // view engine setup
@@ -41,13 +42,8 @@ app.use('/mys3', mys3Router);
 app.use('/getalbums',getAlbumsRouter);
 app.use('/getRandomImage',getRandomImage);
 app.use('/upload',uploadtos3);
+app.use('/login', login);
 
-// Login
-app.use('/login', (req, res) => {
-  res.send({
-    token: 'test123'
-  });
-});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
