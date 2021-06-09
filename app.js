@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require("cors");
+var mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
 require('dotenv').config()
@@ -16,11 +17,18 @@ var getAlbumsRouter = require('./routes/getalbums');
 var getRandomImage = require('./routes/getrandomimage');
 var uploadtos3 =  require('./routes/uploadtos3');
 var login = require('./routes/loginapi');
+var picture = require('./routes/pictures');
+var albums = require('./routes/albums');
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+
+// DB Connection
+mongoose.connect(process.env.DB_URL + process.env.DB_NAME, { useNewUrlParser: true, useUnifiedTopology: true });
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
 
 app.use(cors());
 app.use(logger('dev'));
@@ -43,6 +51,8 @@ app.use('/getalbums',getAlbumsRouter);
 app.use('/getRandomImage',getRandomImage);
 app.use('/upload',uploadtos3);
 app.use('/login', login);
+app.use('/pictures', picture);
+app.use('/albums', albums);
 
 
 // catch 404 and forward to error handler
