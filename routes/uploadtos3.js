@@ -2,7 +2,12 @@ const express = require('express')
 var router = express.Router();
 
 var multer  = require('multer');
-var upload = multer({ dest: 'uploads/' })
+var upload = multer({ 
+    dest: 'uploads/', 
+    limits: {
+        fieldSize: 25 * 1024 * 1024 
+    }
+})
 
 const AWS = require('aws-sdk')
 
@@ -50,6 +55,8 @@ async function postimagetodirectory(filename, fileContent, albumid){
     // Uploading files to the bucket
     var s3response = await s3.putObject(params, function(err, data) {
         if (err) {
+            console.log("error when upload file to s3");
+            console.log(err);
             throw err;
         }
         console.log(`File uploaded successfully. ${data.Location}`);
@@ -78,13 +85,14 @@ router
         })
     })
     .post('/:albumid', upload.single('formtest'), function(req, res, next) {
+        console.log(res);
         console.log(req.params.albumid);
         console.log("why / disapper");
         res.send("okkkkk");
         buf = Buffer.from(req.body.file.replace(/^data:image\/\w+;base64,/, ""),'base64');
 
         postimagetodirectory(req.body.filename, buf, req.params.albumid).then((result)=>{
-            
+            console.log(result);
         })
 
         // getoneImage(req.params.albumid).then((url)=>{
