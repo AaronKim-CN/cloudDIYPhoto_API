@@ -24,9 +24,16 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-
 // DB Connection
-mongoose.connect(process.env.DB_URL + process.env.DB_NAME, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.DB_URL, 
+  { 
+    useNewUrlParser: true, 
+    useUnifiedTopology: true,
+    user: process.env.DB_USER,
+    pass: process.env.DB_PASS,
+    authSource:"admin",
+    dbName: process.env.DB_NAME });
+
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 
