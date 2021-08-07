@@ -1,7 +1,11 @@
 const express = require('express')
 var router = express.Router();
 
-var AlbumsController = require('../controllers/AlbumsControllers');
+// // MongoDB
+// var AlbumsController = require('../controllers/AlbumsControllers');
+
+// Migrate to DynamoDB
+var AlbumsController = require('../controllers/AlbumsDDController');
 
 router.get('/', AlbumsController.getAlbums);
 router.post('/', AlbumsController.addNewAlbum);

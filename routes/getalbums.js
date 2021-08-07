@@ -1,6 +1,8 @@
 const express = require('express')
 var router = express.Router();
 
+// Not use anymore.
+
 const AWS = require('aws-sdk')
 
 AWS.config.update({
@@ -89,6 +91,7 @@ router
     })
     .get('/:albumid', function(req, res, next) {
 
+        // Replaced.....
         // Get all images in the album
         getAlbumImages(req.params.albumid).then((data)=>{
             // console.log(data)
