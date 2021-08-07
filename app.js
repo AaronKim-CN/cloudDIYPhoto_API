@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require("cors");
 var mongoose = require('mongoose');
+const dynamoose = require("dynamoose");
 const bodyParser = require('body-parser');
 
 require('dotenv').config()
@@ -25,24 +26,33 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 // DB Connection
-mongoose.connect(process.env.DB_URL, 
-  { 
-    useNewUrlParser: true, 
-    useUnifiedTopology: true,
-    user: process.env.DB_USER,
-    pass: process.env.DB_PASS,
-    authSource:"admin",
-    dbName: process.env.DB_NAME });
+// mongoose.connect(process.env.DB_URL, 
+//   { 
+//     useNewUrlParser: true, 
+//     useUnifiedTopology: true,
+//     user: process.env.DB_USER,
+//     pass: process.env.DB_PASS,
+//     authSource:"admin",
+//     dbName: process.env.DB_NAME 
+//   });
 
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
+// var db = mongoose.connection;
+// db.on('error', console.error.bind(console, 'connection error:'));
+
+// DynamoDB
+dynamoose.aws.sdk.config.update({
+  "accessKeyId": process.env.AWS_ACCESSKEY,
+  "secretAccessKey": process.env.AWS_SECRETKEY,
+  "region": process.env.REGION
+});
 
 app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+//app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, './client/build')));
 app.use(bodyParser.urlencoded({
   extended: false,
   type: 'application/x-www-form-urlencoded'
@@ -56,8 +66,8 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/testAPI', testAPIRouter);
 app.use('/mys3', mys3Router);
-app.use('/getalbums',getAlbumsRouter);
-app.use('/getRandomImage',getRandomImage);
+// app.use('/getalbums',getAlbumsRouter);
+// app.use('/getRandomImage',getRandomImage);
 app.use('/upload',uploadtos3);
 app.use('/login', login);
 app.use('/pictures', picture);

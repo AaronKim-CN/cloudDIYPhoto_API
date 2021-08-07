@@ -1,6 +1,8 @@
 const express = require('express')
 var router = express.Router();
 
+//Not use anymore.
+
 const AWS = require('aws-sdk')
 
 AWS.config.update({
