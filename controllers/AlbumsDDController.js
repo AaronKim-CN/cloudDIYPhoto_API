@@ -1,5 +1,5 @@
 const Albums = require('../models/AlbumsDD');
-const s3methods = require('./s3methods');
+const s3methods = require('../lib/s3methods');
 
 module.exports = {
     

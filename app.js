@@ -13,11 +13,9 @@ require('dotenv').config()
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var testAPIRouter = require('./routes/testAPI');
-var mys3Router = require('./routes/mys3');
-var getAlbumsRouter = require('./routes/getalbums');
-var getRandomImage = require('./routes/getrandomimage');
-var uploadtos3 =  require('./routes/uploadtos3');
-var login = require('./routes/loginapi');
+//var mys3Router = require('./routes/mys3');
+//var uploadtos3 =  require('./routes/uploadtos3');
+var login = require('./routes/login');
 var picture = require('./routes/pictures');
 var albums = require('./routes/albums');
 var app = express();
@@ -46,7 +44,9 @@ dynamoose.aws.sdk.config.update({
   "region": process.env.REGION
 });
 
-app.use(cors());
+app.use(cors({
+  origin: '*'
+}));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -61,14 +61,11 @@ app.use(bodyParser.json({
   type: 'application/*+json',
 }));
 
-
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/testAPI', testAPIRouter);
-app.use('/mys3', mys3Router);
-// app.use('/getalbums',getAlbumsRouter);
-// app.use('/getRandomImage',getRandomImage);
-app.use('/upload',uploadtos3);
+//app.use('/mys3', mys3Router);
+//app.use('/upload',uploadtos3);
 app.use('/login', login);
 app.use('/pictures', picture);
 app.use('/albums', albums);
