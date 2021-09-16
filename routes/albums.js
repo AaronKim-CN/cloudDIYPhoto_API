@@ -1,5 +1,7 @@
-const express = require('express')
+const express = require('express');
 var router = express.Router();
+
+const authenticateJWT = require('../lib/authenticateJWT');
 
 // // MongoDB
 // var AlbumsController = require('../controllers/AlbumsControllers');
@@ -7,7 +9,7 @@ var router = express.Router();
 // Migrate to DynamoDB
 var AlbumsController = require('../controllers/AlbumsDDController');
 
-router.get('/', AlbumsController.getAlbums);
-router.post('/', AlbumsController.addNewAlbum);
+router.get('/', authenticateJWT, AlbumsController.getAlbums);
+router.post('/',authenticateJWT, AlbumsController.addNewAlbum);
 
 module.exports = router;
