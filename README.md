@@ -12,8 +12,17 @@ Create 3 tables on the DynamoDB and add the table information to the .env file.
 - Picture Table, it collects pictures location on the S3 and some metadata.
 - User Table, it stores the user information and control who can access to this service.
 
+#### Add an initial admin user to the User Table.
+Create a user in the User Table. The items are the following.
+|Items|Description|
+|-----|-----------|
+|userid|The userid to login|
+|email|The email address of the user. It's optional now.|
+|password|The password to login|
+|role|The role of the user. It's optional now. For example, "admin"|
+
 ## Set-up S3 on the AWS
-Create a bucket on the AWS and add the bucket name to the .env file.
+Create a bucket on the AWS and add the bucket name to the .env file. We store images on the AWS S3 service.
 
 # Run the application
 Simply run the following basic nodejs commandes to run the App. 
