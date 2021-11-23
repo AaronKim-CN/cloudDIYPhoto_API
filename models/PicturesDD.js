@@ -8,6 +8,7 @@ const PicturesSchema = new dynamoose.Schema({
     "album": String,
     "time": Date,
     "s3key": String,
+    "ThumnailKey": String,
     "place": String,
     "tags": String
 }, {
