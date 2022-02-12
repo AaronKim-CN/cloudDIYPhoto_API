@@ -16,8 +16,8 @@ module.exports = {
         Pictures.scan("album").contains(req.params.albumid).limit(1).exec((error, picture) => {
             if (error) {
                 console.error(error);
-            } else {
-                
+            } else {    
+
                 // Send a Default Picture if there is no images in the album.
                 if (picture.count == 0) {
                     // Change to a Default image
@@ -49,6 +49,7 @@ module.exports = {
             } else {
                 
                 let data_list = []
+                
                 if (pictures.count == 0) {
                     console.log("no data in the album.");
                     res.send(data_list);
@@ -80,47 +81,60 @@ module.exports = {
 
         console.log("Get all Thumnail images of an album");
         // Get a Picture List of an album from DB.
-        Pictures.scan("album").contains(req.params.albumid).exec((error, pictures) => {
-            if (error) {
-                console.log(error);
-                res.send("Error happens");
+        let keyObj = {}
+        let limit = 100
+        let results = []
+        
+        if (req.query.lastKey) {
+            keyObj = JSON.parse(req.query.lastKey)
+            results = Pictures.scan("album").startAt(keyObj).limit(limit).contains(req.params.albumid).exec()
+        } else {
+            results = Pictures.scan("album").limit(limit).contains(req.params.albumid).exec()
+        }
+        
+        results.then((pictures) => {
+              
+            let resbody = {}
+            resbody['lastKey'] = pictures.lastKey
+            resbody['count'] = pictures.count
 
+            let data_list = []
+            if (pictures.count == 0) {
+                console.log("no data in the album.");
+                res.send(data_list);
             } else {
-                
-                let data_list = []
-                if (pictures.count == 0) {
-                    console.log("no data in the album.");
-                    res.send(data_list);
-                } else {
 
-                    pictures.forEach(picture => {
+                pictures.forEach(picture => {
 
-                        // Set thumnail if there are thumnails. 
-                        let s3key = ''
-                        if (picture.ThumnailKey){
-                            s3key = req.params.albumid + "/" + picture.ThumnailKey;
-                        } else {
-                            s3key = req.params.albumid + "/" + picture.s3key
-                        }
-                        
-                        // Get signed image URL of S3.
-                        let url = s3methods.getSignedUrl(process.env.MyPhotoBucket, s3key);
+                    // Set thumnail if there are thumnails. 
+                    let s3key = ''
+                    if (picture.ThumnailKey){
+                        s3key = req.params.albumid + "/" + picture.ThumnailKey;
+                    } else {
+                        s3key = req.params.albumid + "/" + picture.s3key
+                    }
+                    
+                    // Get signed image URL of S3.
+                    let url = s3methods.getSignedUrl(process.env.MyPhotoBucket, s3key);
 
-                        // Create Sturctured Data.
-                        const tmp = {}
-                        tmp["img"] = url;
-                        tmp["title"] = picture.filename;
-                        tmp["place"] = picture.place;
+                    // Create Sturctured Data.
+                    const tmp = {}
+                    tmp["img"] = url;
+                    tmp["title"] = picture.filename;
+                    tmp["place"] = picture.place;
+                    tmp["thumnailkey"] = picture.ThumnailKey;
+                    tmp["s3key"] = picture.s3key;
 
-                        data_list.push(tmp)
+                    data_list.push(tmp)
 
-                    })
+                })
 
-                    res.send(data_list);
-                }
-                
+                resbody['imageData'] = data_list
+                res.send(resbody);
             }
-        })        
+                
+        })
+
     },
     getOriginalImageByThumnail: function(req, res, next) {
         // Get original Image by Thumnail Key.
@@ -141,6 +155,41 @@ module.exports = {
                 pictures.forEach(picture => {
 
                     let s3key = picture.s3key;
+
+                    // Get signed image URL of S3.
+                    let url = s3methods.getSignedUrl(process.env.MyPhotoBucket, s3key);
+
+                    data_list["img"] = url;
+                    data_list["title"] = picture.filename;
+                    data_list["place"] = picture.place;
+
+                })
+                
+                res.send(data_list);
+
+            }
+        })
+
+    },
+    getOriginalImageByS3key: function(req, res, next) {
+        // Get original Image by Thumnail Key.
+        console.log(req.params.albumid);
+        console.log(req.params.s3key);
+        let query = {
+            "album": {"contains": req.params.albumid},
+            "s3key": {"contains": req.params.s3key}
+        }
+
+        Pictures.scan(query).exec((error, pictures) => {
+            if (error) {
+                console.log(error);
+                res.send("Error happens");
+            } else {
+                console.log(pictures);
+                let data_list = {};
+                pictures.forEach(picture => {
+
+                    let s3key = req.params.albumid + "/" + picture.s3key;
 
                     // Get signed image URL of S3.
                     let url = s3methods.getSignedUrl(process.env.MyPhotoBucket, s3key);

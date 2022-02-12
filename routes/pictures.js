@@ -27,6 +27,6 @@ router.get('/:albumid/thumnail', authenticateJWT, PicturesController.getThumnail
 // Upload image to an album.
 router.post('/:albumid/upload', authenticateJWT, upload.single('formtest'), PicturesController.uploadNewPicture);
 // Get the original image of a thumnnail.
-router.get('/:albumid/:thumnailid', PicturesController.getOriginalImageByThumnail);
+router.get('/:albumid/:s3key', PicturesController.getOriginalImageByS3key);
 
 module.exports = router;
