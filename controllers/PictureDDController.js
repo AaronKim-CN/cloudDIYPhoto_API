@@ -222,6 +222,7 @@ module.exports = {
                     // do not enlarge if the width or height are already less than the specified dimensions
                     withoutEnlargement: true
                 })
+                .withMetadata()
                 .toFormat('jpeg')
                 .toBuffer()
                 .then(function(outputBuffer){
